@@ -14,18 +14,23 @@ class Scheduler {
 }
 
 class Interpreter {
-  run(operations) {
-    operations.forEach(([operation, params]) => {
+  run(actor, operations) {
+    for(let i=0; i<operations.length; i++) {
+      const [operation, params] = operations[i];
+
       switch (operation) {
+        case 'exit':
+          actor.terminated = true;
+          return;
         case 'print':
           console.log(params);
           break;
 
         case 'loop':
-          this.run(params);
+          this.run(actor, params);
           break;
       }
-    });
+    };
   }
 }
 
@@ -61,7 +66,7 @@ function work() {
     let reductions;
 
     for (reductions=0; reductions<maxReductions; reductions++) {
-      interpreter.run(actor.code);
+      interpreter.run(actor, actor.code);
     }
 
     actor.reductions += reductions;

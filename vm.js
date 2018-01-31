@@ -63,6 +63,8 @@ VM.start();
 
 VM.spawn(
   ['print', "I'm an actor"],
+  ['exit'],
+  ['print', "Unreachable"],
 );
 
 VM.spawn(
