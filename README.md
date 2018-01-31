@@ -10,7 +10,7 @@ Heavily inspired by Erlang + Elixir.
 # Installation
 
 ```
-hub clone joshnuss/pesci
+hub clone joshnuss/pacino
 ruby -run -e httpd . -p 8000
 open localhost:8000
 ```
