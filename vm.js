@@ -28,6 +28,17 @@ const VM = {
     return scheduler.postMessage({type: 'spawn', actor});
   },
 
+  send(id, message) {
+    const schedulerIndex = this.actorMap[id];
+
+    if (!schedulerIndex)
+      throw new Error(`vm: unknown actor ${id}`);
+
+    const scheduler = this.schedulers[schedulerIndex];
+
+    scheduler.postMessage({type: 'send', id, message})
+  },
+
   createActor(instructions) {
     this.lastId += 1;
 
@@ -58,4 +69,6 @@ VM.spawn(
   ['print', 'Me 2'],
 );
 
-// VM.send(id, message)
+const pid = [0, 1]
+
+VM.send(pid, ["hello", "there"])

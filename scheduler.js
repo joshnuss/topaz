@@ -6,7 +6,7 @@ class Scheduler {
   }
 
   spawn(actor) {
-    this.actors[actor.id] == actor;
+    this.actors[actor.id] = actor;
     this.runQueue.push(actor);
 
     return actor;
@@ -34,6 +34,8 @@ const interpreter = new Interpreter();
 const scheduler = new Scheduler();
 
 this.addEventListener('message', ({data}) => {
+  let actor;
+
   switch(data.type) {
     case 'init':
       scheduler.index = data.index;
@@ -41,8 +43,13 @@ this.addEventListener('message', ({data}) => {
       break;
 
     case 'spawn':
-      const actor = scheduler.spawn(data.actor);
+      actor = scheduler.spawn(data.actor);
       console.log(`[scheduler] ${scheduler.index} spawned ${actor.id}`);
+      break;
+
+    case 'send':
+      actor = scheduler.actors[data.id];
+      actor.mailbox.push(data.message);
       break;
   }
 });
@@ -64,7 +71,7 @@ function work() {
     }
   }
 
-  setTimeout(work, 100);
+  setTimeout(work, 1000);
 }
 
 work();
