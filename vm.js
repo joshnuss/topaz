@@ -1,5 +1,5 @@
 const VM = {
-  cpus: 8,
+  cpus: navigator.hardwareConcurrency,
   schedulers: [],
   lastId: 0,
   actorMap: new Map(),
