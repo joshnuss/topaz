@@ -5,6 +5,8 @@ A virtual machine for running Actors in the browser & on the server.
 
 > Say hello to my little friend
 
+Heavily inspired by Erlang + Elixir.
+
 # Installation
 
 ```
