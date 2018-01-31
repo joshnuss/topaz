@@ -64,7 +64,7 @@ function work() {
     }
   }
 
-  setTimeout(work, 1000);
+  setTimeout(work, 100);
 }
 
 work();
