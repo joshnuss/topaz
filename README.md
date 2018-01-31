@@ -1,7 +1,9 @@
-Pesci
+Pacino
 -------
 
 A virtual machine for running Actors in the browser & on the server.
+
+> Say hello to my little friend
 
 # Installation
 
