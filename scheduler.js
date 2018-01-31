@@ -49,12 +49,29 @@ this.addEventListener('message', ({data}) => {
 
     case 'spawn':
       actor = scheduler.spawn(data.actor);
-      console.log(`[scheduler] ${scheduler.index} spawned ${actor.id}`);
+      console.log(`[scheduler] ${scheduler.index} spawned [${actor.id}]`);
       break;
 
     case 'send':
       actor = scheduler.actors[data.id];
       actor.mailbox.push(data.message);
+      console.log(`[scheduler] ${scheduler.index} received "${data.message}" for [${actor.id}]`);
+      break;
+
+    case 'link':
+      actor = scheduler.actors[data.id];
+      data.ids.forEach(id => {
+        actor.links.push(id);
+      });
+
+      console.log(`[scheduler] ${scheduler.index} is linking [${data.ids}] with [${actor.id}]`);
+      break;
+
+    case 'monitor':
+      actor = scheduler.actors[data.id];
+      actor.monitors.push(data.monitorId);
+
+      console.log(`[scheduler] ${scheduler.index} is monitoring [${actor.id}] for [${data.monitorId}]`);
       break;
   }
 });
@@ -71,7 +88,10 @@ function work() {
 
     actor.reductions += reductions;
 
-    if (!actor.terminated) {
+    if (actor.terminated) {
+      // kill all links
+      // notify all monitors
+    } else {
       scheduler.runQueue.push(actor);
     }
   }

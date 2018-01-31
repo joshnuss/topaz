@@ -29,6 +29,22 @@ const VM = {
   },
 
   send(id, message) {
+    this.notifyScheduler(id, 'send', {message})
+  },
+
+  link(...ids) {
+    ids.forEach(id => {
+      this.notifyScheduler(id, 'link', {ids: ids.filter(x => x !== id)});
+    });
+  },
+
+  monitor(monitorId, ...ids) {
+    ids.forEach(id => {
+      this.notifyScheduler(id, 'monitor', {monitorId});
+    });
+  },
+
+  notifyScheduler(id, type, message) {
     const schedulerIndex = this.actorMap[id];
 
     if (!schedulerIndex)
@@ -36,7 +52,7 @@ const VM = {
 
     const scheduler = this.schedulers[schedulerIndex];
 
-    scheduler.postMessage({type: 'send', id, message})
+    scheduler.postMessage({type, id, ...message});
   },
 
   createActor(instructions) {
@@ -51,7 +67,7 @@ const VM = {
       monitors: [],
       blocked: false,
       terminated: false,
-    }
+    };
   }
 }
 
@@ -71,6 +87,9 @@ VM.spawn(
   ['print', 'Me 2'],
 );
 
-const pid = [0, 1]
+const pid = [0, 1];
+const pid2 = [0, 2];
 
-VM.send(pid, ["hello", "there"])
+VM.send(pid, ["hello", "there"]);
+VM.link(pid, pid2);
+VM.monitor(pid, pid2);
