@@ -105,28 +105,4 @@ function randomNumber(max) {
 
 VM.start();
 
-const pid1 = VM.spawn(
-  ['print', "I'm an actor"],
-  ['exit'],
-  ['print', "Unreachable"],
-);
-
-/*
-const pid2 = VM.spawn(
-  ['print', 'Me 2'],
-);
-*/
-
-const pid3 = VM.spawn(
-  ['print', 'hello'],
-  ['receive'],
-  ['print', 'got first message'],
-  ['receive'],
-  ['print', 'got second message'],
-);
-
-//VM.link(pid1, pid2, pid3);
-VM.monitor(pid3, pid1);
-
-//setTimeout(() => VM.terminate(pid2), 5500);
-//setTimeout(() => VM.send(pid3, 'a message'), 5600);
+window.VM = VM;

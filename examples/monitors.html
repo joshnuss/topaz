@@ -1,0 +1,12 @@
+<script src='../vm.js'></script>
+<script>
+  // spawn 2 actors
+  const pid1 = VM.spawn(['print', 'hello']);
+  const pid2 = VM.spawn(['print', 'world'], ['receive']);
+
+  // pid2 monitors pid1
+  VM.monitor(pid2, pid1);
+
+  // after 3 seconds, terminate one actor, which causes other (monitoring actor) to receive a notification message 
+  setTimeout(() => VM.terminate(pid1), 3000);
+</script>

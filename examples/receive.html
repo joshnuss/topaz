@@ -1,0 +1,12 @@
+<script src='../vm.js'></script>
+<script>
+  // spawn 2 actors
+  const pid = VM.spawn(
+    ['print', 'hello'],
+    ['receive'], // blocks
+    ['print', 'world'], // prints after message is placed in mailbox
+  );
+
+  // after 3 seconds, send actor message "yo"
+  setTimeout(() => VM.send(pid, "yo"), 3000);
+</script>
