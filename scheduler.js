@@ -8,8 +8,24 @@ class Scheduler {
   spawn(actor) {
     this.actors[actor.id] = actor;
     this.runQueue.push(actor);
+  }
 
-    return actor;
+  send(actorId, message) {
+    const actor = this.actors[actorId];
+
+    actor.mailbox.push(message);
+  }
+
+  link(actorId, ids) {
+    const actor = this.actors[actorId];
+
+    ids.forEach(id => actor.links.push(id));
+  }
+
+  monitor(actorId, monitorId) {
+    const actor = this.actors[actorId];
+
+    actor.monitors.push(monitorId);
   }
 }
 
@@ -48,30 +64,23 @@ this.addEventListener('message', ({data}) => {
       break;
 
     case 'spawn':
-      actor = scheduler.spawn(data.actor);
-      console.log(`[scheduler] ${scheduler.index} spawned [${actor.id}]`);
+      scheduler.spawn(data.actor);
+      console.log(`[scheduler] ${scheduler.index} spawned [${data.actor}]`);
       break;
 
     case 'send':
-      actor = scheduler.actors[data.id];
-      actor.mailbox.push(data.message);
-      console.log(`[scheduler] ${scheduler.index} received "${data.message}" for [${actor.id}]`);
+      scheduler.send(data.id, data.message);
+      console.log(`[scheduler] ${scheduler.index} received "${data.message}" for [${data.id}]`);
       break;
 
     case 'link':
-      actor = scheduler.actors[data.id];
-      data.ids.forEach(id => {
-        actor.links.push(id);
-      });
-
-      console.log(`[scheduler] ${scheduler.index} is linking [${data.ids}] with [${actor.id}]`);
+      scheduler.link(data.id, data.ids);
+      console.log(`[scheduler] ${scheduler.index} is linking [${data.ids}] with [${data.id}]`);
       break;
 
     case 'monitor':
-      actor = scheduler.actors[data.id];
-      actor.monitors.push(data.monitorId);
-
-      console.log(`[scheduler] ${scheduler.index} is monitoring [${actor.id}] for [${data.monitorId}]`);
+      scheduler.monitor(data.id, data.monitorId);
+      console.log(`[scheduler] ${scheduler.index} is monitoring [${data.id}] for [${data.monitorId}]`);
       break;
   }
 });
