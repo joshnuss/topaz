@@ -16,7 +16,7 @@ class Scheduler {
       actor.mailbox.push(message);
       actor.waiting = false;
     } else {
-      bubble('send', {id: actorId, message});
+      this.bubble('send', {id: actorId, message});
     }
   }
 
@@ -53,7 +53,7 @@ class Scheduler {
 class Interpreter {
   run(actor, operations) {
     for(let i=0; i<operations.length; i++) {
-      const [operation, params] = operations[i];
+      const [operation, ...params] = operations[i];
 
       switch (operation) {
         case 'exit':
@@ -71,12 +71,18 @@ class Interpreter {
           }
           break;
 
+        case 'send':
+          const [pid, message] = params;
+          scheduler.send(pid, message);
+          scheduler.log(`[${actor.id}]: sent [${pid}]`, message);
+          break;
+
         case 'print':
           scheduler.log(`[${actor.id}]: ${params}`);
           break;
 
         case 'loop':
-          this.run(actor, params);
+          this.run(actor, ...params);
           break;
       }
     };

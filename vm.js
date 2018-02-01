@@ -84,6 +84,10 @@ const VM = {
 
   onmessage(from, message) {
     switch (message.type) {
+      case 'send':
+        VM.send(message.id, message.message);
+
+        break;
       case 'terminated':
         const {id, links, monitors} = message;
 
