@@ -41,6 +41,10 @@ class Scheduler {
       // notify monitor
     });
   }
+
+  log(message) {
+    console.log(`[scheduler:${this.index}]: ${message}`);
+  }
 }
 
 class Interpreter {
@@ -86,32 +90,32 @@ this.addEventListener('message', ({data}) => {
   switch(data.type) {
     case 'init':
       scheduler.index = data.index;
-      console.log(`[scheduler] ${scheduler.index} is online`);
+      scheduler.log('is online');
       break;
 
     case 'spawn':
       scheduler.spawn(data.actor);
-      console.log(`[scheduler] ${scheduler.index} spawned [${data.actor}]`);
+      scheduler.log(`spawned [${data.actor.id}]`);
       break;
 
     case 'terminate':
       scheduler.terminate(data.id);
-      console.log(`[scheduler] ${scheduler.index} terminated [${data.id}]`);
+      scheduler.log(`terminated [${data.id}]`);
       break;
 
     case 'send':
       scheduler.send(data.id, data.message);
-      console.log(`[scheduler] ${scheduler.index} received "${data.message}" for [${data.id}]`);
+      scheduler.log(`received "${data.message}" for [${data.id}]`);
       break;
 
     case 'link':
       scheduler.link(data.id, data.ids);
-      console.log(`[scheduler] ${scheduler.index} is linking [${data.ids}] with [${data.id}]`);
+      scheduler.log(`is linking [${data.ids}] with [${data.id}]`);
       break;
 
     case 'monitor':
       scheduler.monitor(data.id, data.monitorId);
-      console.log(`[scheduler] ${scheduler.index} is monitoring [${data.id}] for [${data.monitorId}]`);
+      scheduler.log(`is monitoring [${data.id}] for [${data.monitorId}]`);
       break;
   }
 });
