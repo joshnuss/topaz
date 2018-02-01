@@ -19,6 +19,10 @@ ruby -run -e httpd . -p 8000
 open localhost:8000
 ```
 
+## Examples
+
+See [examples](examples folder)
+
 ## License
 
 MIT
