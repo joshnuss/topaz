@@ -27,6 +27,19 @@ class Scheduler {
 
     actor.monitors.push(monitorId);
   }
+
+  terminate(actorId) {
+    const actor = this.actors[actorId];
+
+    actor.terminated = true;
+    actor.links.forEach(id => {
+      // terminate link
+    });
+
+    actor.monitors.forEach(id => {
+      // notify monitor
+    });
+  }
 }
 
 class Interpreter {
@@ -68,6 +81,11 @@ this.addEventListener('message', ({data}) => {
       console.log(`[scheduler] ${scheduler.index} spawned [${data.actor}]`);
       break;
 
+    case 'terminate':
+      scheduler.terminate(data.id);
+      console.log(`[scheduler] ${scheduler.index} terminated [${data.id}]`);
+      break;
+
     case 'send':
       scheduler.send(data.id, data.message);
       console.log(`[scheduler] ${scheduler.index} received "${data.message}" for [${data.id}]`);
@@ -98,8 +116,7 @@ function work() {
     actor.reductions += reductions;
 
     if (actor.terminated) {
-      // kill all links
-      // notify all monitors
+      scheduler.terminate(actor.id);
     } else {
       scheduler.runQueue.push(actor);
     }

@@ -44,6 +44,10 @@ const VM = {
     });
   },
 
+  terminate(id) {
+    this.notifyScheduler(id, 'terminate');
+  },
+
   notifyScheduler(id, type, message) {
     const schedulerIndex = this.actorMap[id];
 
@@ -93,3 +97,5 @@ const pid2 = [0, 2];
 VM.send(pid, ["hello", "there"]);
 VM.link(pid, pid2);
 VM.monitor(pid, pid2);
+
+VM.terminate(pid);
