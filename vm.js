@@ -75,6 +75,7 @@ const VM = {
       code: instructions,
       reductions: 0,
       mailbox: [],
+      state: {},
       links: [],
       monitors: [],
       waiting: false,
