@@ -1,6 +1,5 @@
 class Scheduler {
-  constructor(index) {
-    this.index = index;
+  constructor() {
     this.actors = new Map();
     this.runQueue = [];
   }
@@ -13,8 +12,12 @@ class Scheduler {
   send(actorId, message) {
     const actor = this.actors[actorId];
 
-    actor.mailbox.push(message);
-    actor.waiting = false;
+    if (actor) {
+      actor.mailbox.push(message);
+      actor.waiting = false;
+    } else {
+      bubble('send', {id: actorId, message});
+    }
   }
 
   link(actorId, ids) {
@@ -31,19 +34,19 @@ class Scheduler {
 
   terminate(actorId) {
     const actor = this.actors[actorId];
+    const {id, links, monitors} = actor;
 
     actor.terminated = true;
-    actor.links.forEach(id => {
-      // terminate link
-    });
 
-    actor.monitors.forEach(id => {
-      // notify monitor
-    });
+    this.bubble('terminated', {id, links, monitors});
   }
 
-  log(message) {
-    console.log(`[scheduler:${this.index}]: ${message}`);
+  log(message, ...args) {
+    console.log(`[scheduler:${this.index}]: ${message}`, ...args);
+  }
+
+  bubble(type, message) {
+    this.port.postMessage({type, ...message});
   }
 }
 
@@ -54,14 +57,14 @@ class Interpreter {
 
       switch (operation) {
         case 'exit':
-          actor.terminated = true;
+          scheduler.terminate(actor.id);
           return;
 
         case 'receive':
           if (actor.mailbox.length) {
             const message = actor.mailbox.pop();
 
-            console.log(`received ${message}`);
+            scheduler.log(`[${actor.id}]: received`, message);
           } else {
             actor.waiting = true;
             return;
@@ -69,7 +72,7 @@ class Interpreter {
           break;
 
         case 'print':
-          console.log(params);
+          scheduler.log(`[${actor.id}]: ${params}`);
           break;
 
         case 'loop':
@@ -90,6 +93,8 @@ this.addEventListener('message', ({data}) => {
   switch(data.type) {
     case 'init':
       scheduler.index = data.index;
+      scheduler.port = data.port;
+
       scheduler.log('is online');
       break;
 
@@ -105,7 +110,7 @@ this.addEventListener('message', ({data}) => {
 
     case 'send':
       scheduler.send(data.id, data.message);
-      scheduler.log(`received "${data.message}" for [${data.id}]`);
+      scheduler.log(`[${data.id}] recieved`, data.message);
       break;
 
     case 'link':
@@ -116,6 +121,10 @@ this.addEventListener('message', ({data}) => {
     case 'monitor':
       scheduler.monitor(data.id, data.monitorId);
       scheduler.log(`is monitoring [${data.id}] for [${data.monitorId}]`);
+      break;
+
+    default:
+      scheduler.log(`got unknown message ${data}`);
       break;
   }
 });
@@ -128,6 +137,9 @@ function work() {
 
     for (reductions=0; reductions<maxReductions; reductions++) {
       interpreter.run(actor, actor.code);
+
+      if (actor.terminated || actor.waiting)
+        break;
     }
 
     actor.reductions += reductions;

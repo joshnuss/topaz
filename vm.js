@@ -12,8 +12,11 @@ const VM = {
 
   startScheduler(index) {
     const scheduler = new Worker('/scheduler.js');
+    const channel = new MessageChannel();
+    const port = channel.port2;
 
-    scheduler.postMessage({type: 'init', index});
+    channel.port1.onmessage = (message) => this.onmessage(index, message.data);
+    scheduler.postMessage({type: 'init', index, port}, [port]);
 
     this.schedulers.push(scheduler);
   },
@@ -48,11 +51,13 @@ const VM = {
 
   terminate(id) {
     this.notifyScheduler(id, 'terminate');
-    delete this.actorMap[id];
   },
 
   notifyScheduler(id, type, message) {
     const schedulerIndex = this.actorMap[id];
+
+    if (schedulerIndex == 'terminated')
+      return;
 
     if (!schedulerIndex)
       throw new Error(`vm: unknown actor ${id}`);
@@ -75,6 +80,22 @@ const VM = {
       waiting: false,
       terminated: false,
     };
+  },
+
+  onmessage(from, message) {
+    switch (message.type) {
+      case 'terminated':
+        const {id, links, monitors} = message;
+
+        VM.actorMap[id] = 'terminated';
+
+        links.forEach(linked => VM.terminate(linked));
+        monitors.forEach(monitoring => VM.send(monitoring, {message: 'down', id}));
+        break;
+      default:
+        console.log(`[vm] received unexpected message:`, message);
+        break;
+    }
   }
 }
 
@@ -90,9 +111,11 @@ const pid1 = VM.spawn(
   ['print', "Unreachable"],
 );
 
+/*
 const pid2 = VM.spawn(
   ['print', 'Me 2'],
 );
+*/
 
 const pid3 = VM.spawn(
   ['print', 'hello'],
@@ -102,8 +125,8 @@ const pid3 = VM.spawn(
   ['print', 'got second message'],
 );
 
-VM.link(pid1, pid2);
-VM.monitor(pid1, pid3);
+//VM.link(pid1, pid2, pid3);
+VM.monitor(pid3, pid1);
 
-setTimeout(() => VM.terminate(pid2), 5500);
-setTimeout(() => VM.send(pid3, 'a message'), 5600);
+//setTimeout(() => VM.terminate(pid2), 5500);
+//setTimeout(() => VM.send(pid3, 'a message'), 5600);
