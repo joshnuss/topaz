@@ -14,6 +14,7 @@ class Scheduler {
     const actor = this.actors[actorId];
 
     actor.mailbox.push(message);
+    actor.waiting = false;
   }
 
   link(actorId, ids) {
@@ -51,6 +52,18 @@ class Interpreter {
         case 'exit':
           actor.terminated = true;
           return;
+
+        case 'receive':
+          if (actor.mailbox.length) {
+            const message = actor.mailbox.pop();
+
+            console.log(`received ${message}`);
+          } else {
+            actor.waiting = true;
+            return;
+          }
+          break;
+
         case 'print':
           console.log(params);
           break;
@@ -106,7 +119,7 @@ this.addEventListener('message', ({data}) => {
 function work() {
   const actor = scheduler.runQueue.shift();
 
-  if (actor) {
+  if (actor && !actor.terminated) {
     let reductions;
 
     for (reductions=0; reductions<maxReductions; reductions++) {

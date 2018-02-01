@@ -25,7 +25,9 @@ const VM = {
 
     this.actorMap[actor.id] = index;
 
-    return scheduler.postMessage({type: 'spawn', actor});
+    scheduler.postMessage({type: 'spawn', actor});
+
+    return actor.id;
   },
 
   send(id, message) {
@@ -46,6 +48,7 @@ const VM = {
 
   terminate(id) {
     this.notifyScheduler(id, 'terminate');
+    delete this.actorMap[id];
   },
 
   notifyScheduler(id, type, message) {
@@ -69,7 +72,7 @@ const VM = {
       mailbox: [],
       links: [],
       monitors: [],
-      blocked: false,
+      waiting: false,
       terminated: false,
     };
   }
@@ -81,21 +84,26 @@ function randomNumber(max) {
 
 VM.start();
 
-VM.spawn(
+const pid1 = VM.spawn(
   ['print', "I'm an actor"],
   ['exit'],
   ['print', "Unreachable"],
 );
 
-VM.spawn(
+const pid2 = VM.spawn(
   ['print', 'Me 2'],
 );
 
-const pid = [0, 1];
-const pid2 = [0, 2];
+const pid3 = VM.spawn(
+  ['print', 'hello'],
+  ['receive'],
+  ['print', 'got first message'],
+  ['receive'],
+  ['print', 'got second message'],
+);
 
-VM.send(pid, ["hello", "there"]);
-VM.link(pid, pid2);
-VM.monitor(pid, pid2);
+VM.link(pid1, pid2);
+VM.monitor(pid1, pid3);
 
-VM.terminate(pid);
+setTimeout(() => VM.terminate(pid2), 5500);
+setTimeout(() => VM.send(pid3, 'a message'), 5600);
