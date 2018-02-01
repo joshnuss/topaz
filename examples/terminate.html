@@ -1,0 +1,10 @@
+<script src='../vm.js'></script>
+<script>
+  // spawn actor, prints "hello world" endlessly
+  const pid = VM.spawn(['print', 'hello world']);
+
+  //terminate pid after 3 seconds
+  setTimeout(() => {
+    VM.terminate(pid);
+  }, 3000);
+</script>
