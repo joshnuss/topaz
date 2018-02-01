@@ -21,7 +21,7 @@ open localhost:8000
 
 ## Examples
 
-See [examples](examples folder)
+See [examples folder](examples)
 
 ## License
 
