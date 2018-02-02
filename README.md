@@ -15,8 +15,7 @@ Heavily inspired by Erlang + Elixir.
 
 ### Schedulers
 
-The VM contains multiple schedulers (which are [WebWorkers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API)). On a machine with 8 CPUs, 8 schedulers are started, each is running in parallel.
-
+The VM contains multiple schedulers running in parallel (each one is a [WebWorkers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API)). For example, a machine with 8 CPUs there would be 8 schedulers.
 
 ### Spawning an Actor
 
@@ -44,7 +43,7 @@ Sometimes, a message will need to go to an actor on different scheduler. In that
 
 ### Actor Object
 
-Each actor is a represented as a plain JavaScript `Object`. It contains the following data:
+Each actor is represented as a plain JavaScript `Object`. It contains the following data:
 
 - `id: [nodeId, actorId]` an 2-cell array, first element is the node, second is the actor id
 - `mailbox: []` an array of messages that are waiting to be processed.
