@@ -77,6 +77,13 @@ class Interpreter {
           scheduler.log(`[${actor.id}]: sent [${pid}]`, message);
           break;
 
+        case 'increment':
+          const key = params[0];
+          const by = params.length > 1 ? params[1] : 1;
+          actor.state[key] += by;
+          scheduler.log(`[${actor.id}]: increment ${key} by ${by}`);
+          break;
+
         case 'print':
           scheduler.log(`[${actor.id}]: ${params}`);
           break;
