@@ -15,7 +15,7 @@ Heavily inspired by Erlang + Elixir.
 
 ### Schedulers
 
-The VM contains multiple schedulers running in parallel (each one is a [WebWorkers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API)). For example, a machine with 8 CPUs there would be 8 schedulers.
+The VM contains multiple schedulers running in parallel (each one is a [WebWorker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API)). For example, a machine with 8 CPUs would have 8 schedulers.
 
 ### Spawning an Actor
 
@@ -23,7 +23,7 @@ Calling `VM.spawn(code)` creates a new actor object and places it on a random sc
 
 ### Multitasking
 
-This VM uses pre-emptive multitasking.
+The VM uses pre-emptive multitasking to time-slice the CPU.
 
 Each scheduler has a "run queue", it pops actors off the queue, gives it 2000 iterations, pauses it and pushes it back to the end of the queue. It then pops the next actor and repeats in an endless loop. This ensures that no actor hogs the CPU.
 
