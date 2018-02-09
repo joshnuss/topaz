@@ -1,10 +1,11 @@
 <script src='../vm.js'></script>
 <script>
-  const vm = new VM();
+  const vm0 = new VM(0);
+  const vm1 = new VM(1);
 
-  // spawn 2 actors
-  const pid1 = vm.spawn(['print', 'hello']);
-  const pid2 = vm.spawn(['print', 'world']);
+  // spawn 2 actors on different nodes
+  const pid1 = vm0.spawn(['print', 'hello']);
+  const pid2 = vm1.spawn(['print', 'world']);
 
   // link them together
   VM.link(pid1, pid2);

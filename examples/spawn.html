@@ -1,5 +1,6 @@
 <script src='../vm.js'></script>
 <script>
+  const vm = new VM();
   // spawn actor, prints "hello world" endlessly
-  VM.spawn(['print', 'hello world']);
+  vm.spawn(['print', 'hello world']);
 </script>

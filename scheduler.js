@@ -121,7 +121,7 @@ this.addEventListener('message', ({data}) => {
 
     case 'link':
       scheduler.link(data.id, data.ids);
-      scheduler.log(`is linking [${data.ids}] with [${data.id}]`);
+      scheduler.log(`is linking ${data.ids.map(id => `[${id}]`).join(', ')} with [${data.id}]`);
       break;
 
     case 'monitor':

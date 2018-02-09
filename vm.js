@@ -1,14 +1,43 @@
-const VM = {
-  cpus: navigator.hardwareConcurrency,
-  schedulers: [],
-  lastId: 0,
-  actorMap: new Map(),
+const nodes = new Map();
 
-  start() {
-    for (let i=0; i<VM.cpus; i++) {
+class VM {
+  static spawn(node, code) {
+    nodes[node].spawn(code);
+  }
+
+  static terminate([node, id]) {
+    nodes[node].terminate([node, id]);
+  }
+
+  static send([node, id], message) {
+    nodes[node].send([node, id], message);
+  }
+
+  static link(...ids) {
+    ids.forEach(([node, id]) => {
+      const vm = nodes[node];
+      const filtered = ids.filter(x => x.toString() !== [node, id].toString());
+
+      vm.link([node, id], ...filtered);
+    });
+  }
+
+  static monitor([node, id], ...ids) {
+    nodes[node].monitor([0, id], ids);
+  }
+
+  constructor(name = 0) {
+    this.name = name;
+    this.schedulers = [];
+    this.lastId = 0;
+    this.actorMap = new Map();
+
+    nodes[name] = this;
+
+    for (let i=0; i<navigator.hardwareConcurrency; i++) {
       this.startScheduler(i);
     }
-  },
+  }
 
   startScheduler(index) {
     const scheduler = new Worker('/scheduler.js');
@@ -19,7 +48,7 @@ const VM = {
     scheduler.postMessage({type: 'init', index, port}, [port]);
 
     this.schedulers.push(scheduler);
-  },
+  }
 
   spawn(...instructions) {
     const actor = this.createActor(instructions);
@@ -31,27 +60,29 @@ const VM = {
     scheduler.postMessage({type: 'spawn', actor});
 
     return actor.id;
-  },
+  }
 
   send(id, message) {
     this.notifyScheduler(id, 'send', {message})
-  },
+  }
 
   link(...ids) {
-    ids.forEach(id => {
-      this.notifyScheduler(id, 'link', {ids: ids.filter(x => x !== id)});
+    ids.forEach(([node, id]) => {
+      if (node == this.name) {
+        this.notifyScheduler([node, id], 'link', {ids: ids.filter(x => x !== id)});
+      }
     });
-  },
+  }
 
   monitor(monitorId, ...ids) {
     ids.forEach(id => {
       this.notifyScheduler(id, 'monitor', {monitorId});
     });
-  },
+  }
 
   terminate(id) {
     this.notifyScheduler(id, 'terminate');
-  },
+  }
 
   notifyScheduler(id, type, message) {
     const schedulerIndex = this.actorMap[id];
@@ -59,19 +90,20 @@ const VM = {
     if (schedulerIndex == 'terminated')
       return;
 
-    if (!schedulerIndex)
-      throw new Error(`vm: unknown actor ${id}`);
+    if (!schedulerIndex) {
+      throw new Error(`vm:${this.name}: unknown actor ${id}`);
+    }
 
     const scheduler = this.schedulers[schedulerIndex];
 
     scheduler.postMessage({type, id, ...message});
-  },
+  }
 
   createActor(instructions) {
     this.lastId += 1;
 
     return {
-      id: [0, this.lastId],
+      id: [this.name, this.lastId],
       code: instructions,
       reductions: 0,
       mailbox: [],
@@ -81,7 +113,7 @@ const VM = {
       waiting: false,
       terminated: false,
     };
-  },
+  }
 
   onmessage(from, message) {
     switch (message.type) {
@@ -92,13 +124,13 @@ const VM = {
       case 'terminated':
         const {id, links, monitors} = message;
 
-        VM.actorMap[id] = 'terminated';
+        this.actorMap[id] = 'terminated';
 
         links.forEach(linked => VM.terminate(linked));
         monitors.forEach(monitoring => VM.send(monitoring, {message: 'down', id}));
         break;
       default:
-        console.log(`[vm] received unexpected message:`, message);
+        console.log(`[vm:${this.name}] received unexpected message:`, message);
         break;
     }
   }
@@ -107,7 +139,5 @@ const VM = {
 function randomNumber(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
-
-VM.start();
 
 window.VM = VM;

@@ -1,7 +1,9 @@
 <script src='../vm.js'></script>
 <script>
+  const vm = new VM();
+
   // spawn actor
-  const pid = VM.spawn(
+  const pid = vm.spawn(
     ['print', 'hello'],
     ['receive'], // blocks
     ['print', 'world'], // prints after message is placed in mailbox
