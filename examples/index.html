@@ -5,16 +5,29 @@
   <body>
     <h1>Examples</h1>
     <ul>
-      <li><a href='/examples/spawn.html'>Spawn</a></li>
-      <li><a href='/examples/terminate.html'>Terminate</a></li>
-      <li><a href='/examples/links.html'>Links</a></li>
-      <li><a href='/examples/monitors.html'>Monitors</a></li>
-      <li><a href='/examples/receive.html'>Receive</a></li>
-      <li><a href='/examples/send.html'>Send</a></li>
-      <li><a href='/examples/state.html'>State</a></li>
-      <li><a href='/examples/multiple.html'>Multiple Nodes</a></li>
-      <li><a href='/examples/multiple-send.html'>Send across Nodes</a></li>
-      <li><a href='/examples/multiple-links.html'>Link across Nodes</a></li>
+      <li><a data-url='/examples/spawn.js' href='#spawn'>Spawn</a></li>
+      <li><a data-url='/examples/terminate.js' href='#terminate'>Terminate</a></li>
+      <li><a data-url='/examples/links.js' href='#links'>Links</a></li>
+      <li><a data-url='/examples/monitors.js' href='#monitors'>Monitors</a></li>
+      <li><a data-url='/examples/receive.js' href='#receive'>Receive</a></li>
+      <li><a data-url='/examples/send.js' href='#send'>Send</a></li>
+      <li><a data-url='/examples/state.js' href='#state'>State</a></li>
+      <li><a data-url='/examples/multiple.js' href='#multiple-nodes'>Multiple Nodes</a></li>
+      <li><a data-url='/examples/multiple-send.js' href='#multiple-send'>Send across Nodes</a></li>
+      <li><a data-url='/examples/multiple-links.js' href='#multiple-links'>Link across Nodes</a></li>
     </ul>
+
+    <script src='../dist/vm.browser.js'></script>
+    <script>
+      for (element of document.querySelectorAll('ul a')) {
+        const url = element.dataset.url;
+
+        element.addEventListener('click', () => {
+          const script = document.createElement('script');
+          script.src = url;
+          document.body.appendChild(script);
+        });
+      };
+    </script>
   </body>
 </html>
