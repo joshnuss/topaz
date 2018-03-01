@@ -1,6 +1,6 @@
 const nodes = new Map();
 
-class VM {
+export default class VM {
   static spawn(node, code) {
     nodes[node].spawn(code);
   }
@@ -40,7 +40,7 @@ class VM {
   }
 
   startScheduler(index) {
-    const scheduler = new Worker('/scheduler.js');
+    const scheduler = new Worker('../dist/scheduler.browser.js');
     const channel = new MessageChannel();
     const port = channel.port2;
 
@@ -139,5 +139,3 @@ class VM {
 function randomNumber(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
-
-window.VM = VM;

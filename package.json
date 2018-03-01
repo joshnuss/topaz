@@ -1,0 +1,21 @@
+{
+  "name": "pacino",
+  "version": "0.1.0",
+  "main": "index.js",
+  "repository": "git@github.com:joshnuss/pacino.git",
+  "author": "Josh Nussbaum <joshnuss@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "webpack --mode=development --module-bind js=babel-loader",
+    "build": "webpack --mode=production --module-bind js=babel-loader"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.3",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "webpack": "^4.0.1",
+    "webpack-cli": "^2.0.9"
+  }
+}
