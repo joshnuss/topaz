@@ -60,7 +60,7 @@ Each actor is represented as a plain JavaScript `Object`. It contains the follow
 ```
 hub clone joshnuss/pacino
 ruby -run -e httpd . -p 8000
-open localhost:8000
+open localhost:8000/examples
 ```
 
 ## Examples
