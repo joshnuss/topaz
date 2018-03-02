@@ -11,7 +11,7 @@ hub clone joshnuss/topaz
 ### Running on the server
 
 ```
-yarn babel-node example.js
+yarn example examples/spawn.js
 ```
 
 ### Running in the browser
