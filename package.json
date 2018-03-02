@@ -1,8 +1,8 @@
 {
-  "name": "pacino",
+  "name": "topaz",
   "version": "0.1.0",
   "main": "index.js",
-  "repository": "git@github.com:joshnuss/pacino.git",
+  "repository": "git@github.com:joshnuss/topaz.git",
   "author": "Josh Nussbaum <joshnuss@gmail.com>",
   "license": "MIT",
   "scripts": {

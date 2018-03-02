@@ -1,13 +1,6 @@
-
-        ____  ____ ______(_)___  ____
-       / __ \/ __ `/ ___/ / __ \/ __ \
-      / /_/ / /_/ / /__/ / / / / /_/ /
-     / .___/\__,_/\___/_/_/ /_/\____/
-    /_/
+# Topaz
 
 A virtual machine for running Actors in the browser & on the server.
-
-> Say hello to my little friend
 
 Heavily inspired by Erlang + Elixir.
 
@@ -58,7 +51,7 @@ Each actor is represented as a plain JavaScript `Object`. It contains the follow
 ## Installation
 
 ```
-hub clone joshnuss/pacino
+hub clone joshnuss/topaz
 ruby -run -e httpd . -p 8000
 open localhost:8000/examples
 ```
