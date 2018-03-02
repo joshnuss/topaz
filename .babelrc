@@ -1,4 +1,11 @@
 {
   "presets": ["env", "stage-0"],
-  "plugins": ["transform-object-rest-spread"]
+  "plugins": ["transform-object-rest-spread",
+    ["module-resolver", {
+      "root": ["./src"],
+      "alias": {
+        "native": "./src/native/server"
+      }
+    }]
+  ]
 }

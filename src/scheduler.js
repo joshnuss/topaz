@@ -55,7 +55,12 @@ export default class Scheduler {
   }
 
   bubble(type, message) {
-    this.port.postMessage({type, ...message});
+    const payload = {type, ...message};
+
+    if (this.port)
+      this.port.postMessage(payload);
+    else
+      postMessage(payload);
   }
 
   onMessage = ({data}) => {

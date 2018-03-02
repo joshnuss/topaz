@@ -5,18 +5,42 @@ const defaultConfig = {
 };
 
 const serverConfig = {
-  ...defaultConfig,
-  target: 'node',
-  output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: 'vm.server.js'
+  vm: {
+    ...defaultConfig,
+    target: 'node',
+    resolve: {
+      alias: {
+        'native': path.resolve(__dirname, 'src/native/server')
+      },
+    },
+    output: {
+      library: 'VM',
+      libraryTarget: 'commonjs2',
+      path: path.resolve(__dirname, 'dist'),
+      filename: 'vm.server.js'
+    }
   },
+  scheduler: {
+    ...defaultConfig,
+    target: 'node',
+    entry: './src/scheduler',
+    output: {
+      library: 'scheduler',
+      path: path.resolve(__dirname, 'dist'),
+      filename: 'scheduler.server.js'
+    }
+  }
 };
 
 const clientConfig = {
   vm: {
     ...defaultConfig,
     target: 'web',
+    resolve: {
+      alias: {
+        'native': path.resolve(__dirname, 'src/native/browser')
+      },
+    },
     output: {
       library: 'VM',
       libraryExport: 'default',
@@ -36,4 +60,8 @@ const clientConfig = {
   }
 };
 
-module.exports = [serverConfig, clientConfig.vm, clientConfig.scheduler];
+module.exports = [
+  serverConfig.scheduler,
+  clientConfig.scheduler,
+  clientConfig.vm,
+];

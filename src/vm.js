@@ -1,3 +1,5 @@
+import Native from 'native';
+
 const nodes = new Map();
 
 export default class VM {
@@ -34,18 +36,13 @@ export default class VM {
 
     nodes[name] = this;
 
-    for (let i=0; i<navigator.hardwareConcurrency; i++) {
+    for (let i=0; i<Native.cpuCount; i++) {
       this.startScheduler(i);
     }
   }
 
   startScheduler(index) {
-    const scheduler = new Worker('../dist/scheduler.browser.js');
-    const channel = new MessageChannel();
-    const port = channel.port2;
-
-    channel.port1.onmessage = (message) => this.onmessage(index, message.data);
-    scheduler.postMessage({type: 'init', index, port}, [port]);
+    const scheduler = Native.createScheduler(index, this.onMessage.bind(this));
 
     this.schedulers.push(scheduler);
   }
@@ -115,7 +112,7 @@ export default class VM {
     };
   }
 
-  onmessage(from, message) {
+  onMessage(from, message) {
     switch (message.type) {
       case 'send':
         VM.send(message.id, message.message);
