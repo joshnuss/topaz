@@ -41,9 +41,13 @@ export default class Scheduler {
     const actor = this.actors[actorId];
     const {id, links, monitors} = actor;
 
+    if (actor.terminated) return false;
+
     actor.terminated = true;
 
     this.bubble('terminated', {id, links, monitors});
+
+    return true;
   }
 
   log(message, ...args) {
@@ -71,8 +75,11 @@ export default class Scheduler {
         break;
 
       case 'terminate':
-        this.terminate(data.id);
-        this.log(`terminated [${data.id}]`);
+        if (this.terminate(data.id)) {
+          this.log(`terminated [${data.id}]`);
+        } else {
+          this.log(`already terminated [${data.id}]`);
+        }
         break;
 
       case 'send':
