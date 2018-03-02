@@ -6,6 +6,7 @@ A distributed actor-model virtual machine that runs in the browser & on the serv
 
 ```
 hub clone joshnuss/topaz
+yarn && yarn build
 ```
 
 ### Running on the server
@@ -33,17 +34,17 @@ Calling `VM.spawn(code)` creates a new actor object and places it on a random sc
 
 ### Multitasking
 
-The VM uses pre-emptive multitasking to time-slice the CPU.
+The CPUs are time sliced using a pre-emptive multitasking model.
 
 Each scheduler has a "run queue", it pops actors off the queue, gives it 2000 iterations, pauses it and pushes it back to the end of the queue. It then pops the next actor and repeats in an endless loop. This ensures that no actor hogs the CPU.
 
 ### Linking
 
-Actors can be linked to each other: When a linked actor terminates, every link is terminated as well. Links are bi-directional.
+Actors can be linked to each other: When a linked actor terminates, every link is terminated as well. (Links are bi-directional)
 
 ### Monitoring
 
-An actor can monitor another: When a monitored actor terminates, all monitoring actors are notified about the termination. The notifcation is sent to their mailbox. Monitoring is uni-directional.
+Actor can monitor each-other: When a monitored actor terminates, all monitoring actors are notified about the termination. The notifcation is sent to their mailbox. (Monitoring is uni-directional)
 
 ### Messaging
 
