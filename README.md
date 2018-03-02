@@ -1,8 +1,25 @@
 # Topaz
 
-A virtual machine for running Actors in the browser & on the server.
+A distributed actor-model virtual machine that runs in the browser & on the server.
 
-Heavily inspired by Erlang + Elixir.
+## Setup
+
+```
+hub clone joshnuss/topaz
+```
+
+### Running on the server
+
+```
+yarn babel-node example.js
+```
+
+### Running in the browser
+
+```
+ruby -run -e httpd . -p 8000
+open localhost:8000/examples
+```
 
 ## How it works
 
@@ -48,13 +65,6 @@ Each actor is represented as a plain JavaScript `Object`. It contains the follow
 - `state: {}` contains the state data of the actor. Similar to `this` in JavaScript or `self` in Ruby.
 - `reductions: integer` total number of statements processed.
 
-## Installation
-
-```
-hub clone joshnuss/topaz
-ruby -run -e httpd . -p 8000
-open localhost:8000/examples
-```
 
 ## Examples
 
